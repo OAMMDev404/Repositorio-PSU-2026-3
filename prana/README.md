@@ -53,6 +53,18 @@ Las etapas del trabajo siguen el backlog del proyecto (Fase 3, Etapa 3: arquitec
 - Si faltan la edad o el nivel educativo, el estudiante aparece como “Falta dato”.
 - Rangos de edad: 18–25, 26–40 y 41–60.
 
+## Documentos de otros proyectos (`otros_documentos/`)
+
+Estos archivos no son de PRANA. Son documentos de otros proyectos de los autores, guardados aquí por solicitud del equipo.
+
+| Archivo | Tipo | Qué es |
+|---|---|---|
+| `AndeX – Bitácora técnica y documentación del proyecto.pdf` | PDF (13 págs.) | Bitácora técnica del proyecto AndeX, con lo decidido y hecho en la parte de datos y Power BI hasta el 18 de noviembre de 2026. Sirve de insumo para el informe final; cada integrante redacta una sección y marca lo que está “POR CONFIRMAR”. |
+| `estado_del_arte.pdf` | PDF (8 págs.) | Estado del arte del proyecto de **cercado virtual IoT para ganado en fincas de ladera con conectividad limitada**. Revisa nueve trabajos (internacionales, nacionales y locales) en tres ejes: arquitectura de red, cercado virtual y aplicación para el ganadero. |
+| `plan_proyecto.pdf` | PDF (17 págs.) | Plan de Gestión del Proyecto (PMP) del mismo proyecto de cercado virtual IoT, según el estándar IEEE 1058. Grupo de investigación ISTAR, Grupo 4. |
+| `Dimensiones.xlsx` | Excel (7 hojas) | Tablas de dimensiones para análisis de comercio exterior: países (con código ISO3 y código ALADI), departamentos, aduanas, modos de transporte, acuerdos comerciales y tipos de operación, más una hoja de notas. |
+| `control_efectivo.pdf` | PDF (1 pág.) | Formato en blanco de control de efectivo por día y mes (ingresos, retiros, acumulado y saldo). |
+
 ## Notas
 
 - Los archivos `.DS_Store` y los archivos temporales de Excel (`~$…`) no se incluyeron; son archivos auxiliares del sistema.
