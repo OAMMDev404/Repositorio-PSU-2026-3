@@ -1,0 +1,595 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- Idioma y codificación ----------
+\usepackage[spanish,es-noindentfirst]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+% ---------- Diseño (solo blanco y negro) ----------
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage{setspace}
+\setstretch{1.12}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{microtype}
+
+\titleformat{\section}{\Large\bfseries}{\thesection}{0.8em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.6em}{0.7em}
+\titlespacing*{\subsection}{0pt}{1.1em}{0.4em}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small PRANA \textperiodcentered{} Explicación del tablero}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Caja de nota (solo negro sobre blanco)
+\newcommand{\nota}[1]{%
+  \par\medskip
+  \noindent\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\small #1}}%
+  \par\medskip}
+
+% Ficha de indicador
+\newcommand{\ficha}[5]{%
+  \par\medskip
+  \noindent\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{3.4cm}X@{}}
+  \toprule
+  \multicolumn{2}{@{}l@{}}{\large\bfseries #1}\\
+  \midrule
+  Ubicación & #2\\
+  Qué mide & #3\\
+  Cómo se calcula & #4\\
+  Cómo leerlo & #5\\
+  \bottomrule
+  \end{tabularx}
+  \par\medskip}
+
+\sloppy
+\begin{document}
+
+% =====================================================================
+% PORTADA
+% =====================================================================
+\begin{titlepage}
+  \centering
+  \vspace*{3cm}
+  {\Huge\bfseries Tablero de indicadores\par}
+  \vspace{0.4cm}
+  {\LARGE PRANA Incubadora de Empresas Culturales e Industrias Creativas\par}
+  \vspace{1.6cm}
+  \rule{0.6\linewidth}{0.6pt}\par
+  \vspace{0.6cm}
+  {\Large Guía completa para entender, usar y mantener el libro \texttt{PRANA\_Base\_Dashboards\_v5.xlsx}\par}
+  \vspace{0.6cm}
+  \rule{0.6\linewidth}{0.6pt}\par
+  \vfill
+  {\large Pontificia Universidad Javeriana \textperiodcentered{} Ingeniería de Sistemas\\
+  Proyecto Social Universitario \textperiodcentered{} Periodo 2026-3\par}
+  \vspace{0.8cm}
+  {\normalsize Oscar Alejandro Montes Moreno \textperiodcentered{} Eduardo Valeriano\par}
+  \vspace{0.4cm}
+  {\normalsize Noviembre de 2026\par}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% =====================================================================
+\section{Para qué existe este tablero}
+% =====================================================================
+
+El libro \texttt{PRANA\_Base\_Dashboards\_v5.xlsx} reúne en un solo archivo los datos del programa de incubación de PRANA y los indicadores que permiten saber cómo va el programa. Responde preguntas como estas:
+
+\begin{itemize}[leftmargin=1.4em]
+  \item ¿Cuántos emprendedores entran al programa cada año? ¿La convocatoria crece o cae?
+  \item ¿Cuántos terminan el curso y cuántos se retiran? ¿En qué etapa se concentra el abandono?
+  \item ¿Cuántos emprendimientos consiguen recursos del Fondo Emprender? ¿Qué perfiles llegan más a ese resultado?
+  \item ¿Cuánto factura PRANA por formación y se sostiene el programa financieramente?
+  \item ¿A quién hay que llamar primero para hacer seguimiento?
+  \item ¿Qué tan confiables son los datos con los que se toman estas decisiones?
+\end{itemize}
+
+El libro está organizado como una herramienta de tres niveles, que corresponden a tres guías de analítica del proyecto:
+
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{4.2cm}X@{}}
+\toprule
+Nivel & Qué responde\\
+\midrule
+Guía 1 \textperiodcentered{} Analítica descriptiva & \textbf{QUÉ está pasando}: volumen, resultados, finanzas y perfil de los emprendedores. Es la hoja \texttt{Dashboard}.\\
+Guía 2 y 6 \textperiodcentered{} Diagnóstico y priorización & \textbf{POR QUÉ puede estar pasando y A QUIÉN atender primero}. Es la hoja \texttt{Dashboard\_G2\_G6}.\\
+Guía 5 \textperiodcentered{} Metas y semáforos & \textbf{SI vamos bien frente a lo que nos propusimos}. Es la hoja \texttt{KPIs\_y\_Metas}.\\
+Guía 6 \textperiodcentered{} Calidad de datos & \textbf{SI los datos son confiables}. Es la hoja \texttt{Calidad\_Datos}.\\
+Guía 7 \textperiodcentered{} Modelo de datos & \textbf{CÓMO están organizados los datos}. Es la hoja \texttt{Modelo\_Datos}.\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\nota{\textbf{Regla de oro.} Un número solo sirve si sabemos de dónde sale. Cada indicador de este libro tiene su definición escrita junto al gráfico, y este documento repite esa lógica para que cualquier persona del equipo pueda verificarla.}
+
+% =====================================================================
+\section{Cómo está armado el libro}
+% =====================================================================
+
+El libro tiene once hojas. Algunas son visibles para todo el equipo y otras son de cálculo. Cada una tiene una función clara.
+
+\begin{longtable}{@{}>{\bfseries}p{3.4cm}p{2.0cm}p{9.4cm}@{}}
+\toprule
+Hoja & Visibilidad & Función\\
+\midrule
+\endhead
+\texttt{Dashboard} & Visible & Tablero principal con 8 tarjetas de resumen y 11 gráficos. Tiene un filtro de año.\\
+\texttt{Dashboard\_G2\_G6} & Visible & Diagnóstico de desviaciones (finalización y retiro por año), priorización de casos con puntaje y lista de estudiantes por prioridad.\\
+\texttt{KPIs\_y\_Metas} & Visible & Indicadores clave vs. metas (OKR), semáforos, histórico por año y rutina de gestión.\\
+\texttt{Calidad\_Datos} & Visible & 21 reglas automáticas que revisan la calidad de los datos, con semáforo por regla y bitácora mensual.\\
+\texttt{Modelo\_Datos} & Visible & Guía del modelo de datos: entidades, relaciones y reglas de uso.\\
+\texttt{Estudiantes} & Visible & \textbf{Hoja de entrada.} Una fila por emprendedor. Aquí se escribe.\\
+\texttt{Matriculas} & Visible & \textbf{Hoja de entrada.} Una fila por matrícula en un curso. Aquí se escribe.\\
+\texttt{Finanzas} & Visible & \textbf{Hoja de entrada.} Una fila por transacción de ingreso.\\
+\texttt{FondoEmprender} & Visible & \textbf{Hoja de entrada.} Una fila por ganador o participación en el Fondo Emprender.\\
+\texttt{Resumen\_Anual} & Oculta & Totales por año. Alimenta varios gráficos. No se edita.\\
+\texttt{Calculos\_Dashboard} & Oculta & Conteos auxiliares para los gráficos del \texttt{Dashboard}. No se edita.\\
+\bottomrule
+\end{longtable}
+
+\subsection{Hojas de entrada y hojas de salida}
+
+El libro separa dos tipos de hoja. Esta separación es la regla más importante para usarlo bien:
+
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Hojas de entrada} (\texttt{Estudiantes}, \texttt{Matriculas}, \texttt{Finanzas}, \texttt{FondoEmprender}): aquí se escriben los datos. Son la fuente de verdad.
+  \item \textbf{Hojas de salida} (\texttt{Dashboard}, \texttt{Dashboard\_G2\_G6}, \texttt{KPIs\_y\_Metas}, \texttt{Calidad\_Datos}, \texttt{Resumen\_Anual}, \texttt{Calculos\_Dashboard}): todo es fórmula. \textbf{No se escribe en ellas}, porque se borran o se sobrescriben al recalcular.
+\end{itemize}
+
+Las fórmulas leen un rango de hasta la fila 1000 en cada hoja de entrada. Eso significa que el libro admite cerca de mil registros por hoja sin tocar las fórmulas.
+
+\subsection{Flujo de datos}
+
+La figura siguiente muestra de dónde sale cada cifra. Las flechas indican quién alimenta a quién.
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance=0.5cm and 0.6cm,
+  box/.style={draw, rectangle, thick, align=center, minimum width=3.0cm, minimum height=0.9cm, font=\small},
+  hoja/.style={box, fill=white},
+  aux/.style={box, fill=black!8},
+  salida/.style={box, fill=black!18, font=\small\bfseries},
+  arr/.style={-{Stealth[length=2.2mm]}, thick}
+]
+  \node[hoja] (est) {Estudiantes};
+  \node[hoja, below=of est] (mat) {Matriculas};
+  \node[hoja, below=of mat] (fin) {Finanzas};
+  \node[hoja, below=of fin] (fe) {FondoEmprender};
+
+  \node[aux, right=2.2cm of mat] (calc) {Calculos\_Dashboard\\\footnotesize (oculta)};
+  \node[aux, above=0.6cm of calc] (res) {Resumen\_Anual\\\footnotesize (oculta)};
+
+  \node[salida, right=2.2cm of calc] (dash) {Dashboard\\\footnotesize tarjetas y 11 gráficos};
+  \node[salida, below=1.1cm of dash] (g2) {Dashboard\_G2\_G6};
+  \node[salida, below=1.1cm of g2] (kpi) {KPIs\_y\_Metas};
+  \node[salida, below=1.1cm of kpi] (cal) {Calidad\_Datos};
+
+  \draw[arr] (est.east) -- ++(0.9,0) |- (calc.west);
+  \draw[arr] (mat.east) -- (calc.west);
+  \draw[arr] (fin.east) -- ++(0.9,0) |- (res.west);
+  \draw[arr] (fe.east) -- ++(0.9,0) |- (res.west);
+  \draw[arr] (mat.north east) -- ++(0.3,0) |- (res.west);
+  \draw[arr] (calc) -- (dash);
+  \draw[arr] (res.east) -- ++(0.6,0) |- (dash.east);
+  \draw[arr] (mat.south east) -- ++(0.4,0) |- (g2.west);
+  \draw[arr] (est.east) -- ++(1.4,0) |- (cal.west);
+  \draw[arr] (kpi.west) -- ++(-0.6,0) |- (cal.west);
+\end{tikzpicture}
+\end{center}
+
+\nota{\textbf{Lectura de la figura.} Cada hoja de entrada alimenta una o varias hojas auxiliares. Estas a su vez alimentan el tablero y los diagnósticos. Por eso, si se corrige un dato en \texttt{Estudiantes} o \texttt{Matriculas}, todas las cifras se actualizan solas al recalcular.}
+
+% =====================================================================
+\section{Antes de empezar: conceptos básicos}
+% =====================================================================
+
+\begin{description}[leftmargin=3.2cm,style=nextline]
+  \item[Emprendedor] Persona registrada en el programa. Cada uno tiene un \texttt{IDEstudiante} (por ejemplo \texttt{EST001}).
+  \item[Matrícula] Inscripción de un emprendedor en un curso. Un emprendedor puede tener una o más matrículas. Cada una tiene un \texttt{IDCurso} con formato \texttt{CUR} seguido del año (por ejemplo \texttt{CUR2019}).
+  \item[Año de ingreso] Año en que el emprendedor entró a PRANA (columna \texttt{AnioIngreso} de \texttt{Estudiantes}).
+  \item[Año de inicio del Fondo] Año en que empieza a ejecutarse el recurso del Fondo Emprender (columna \texttt{AnioInicio} de \texttt{FondoEmprender}).
+  \item[Fondo Emprender] Convocatoria de recursos para emprendimientos. Un emprendedor es \emph{ganador} si recibe recursos. Para postularse hay que ser mayor de edad y tener nivel de formación profesional o superior.
+  \item[Cohorte] Grupo de emprendedores que entran en el mismo año. Los indicadores por cohorte permiten comparar años sin que se mezclen.
+  \item[Sin dato] Valor vacío o no registrado. El libro lo muestra así para no inventar cifras. Cuando una cifra es \emph{Sin dato}, no significa que sea cero.
+  \item[Pesos y millones] Los montos se muestran en pesos colombianos. En los gráficos aparecen en millones.
+\end{description}
+
+% =====================================================================
+\section{Cómo usar el tablero}
+% =====================================================================
+
+\subsection{El filtro de año}
+
+En la celda \textbf{C5} de la hoja \texttt{Dashboard} hay una lista desplegable con \emph{Todos} y los años de 2016 a 2026. Esa selección cambia algunas partes del tablero y deja otras igual:
+
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{4.9cm}X@{}}
+\toprule
+Qué cambia con el filtro & Qué NO cambia con el filtro\\
+\midrule
+Las tarjetas \emph{Emprendedores inscritos}, \emph{Ganadores}, \emph{Tasa de éxito}, \emph{Recursos apalancados}, \emph{Ingresos por formación}, \emph{Pesos apalancados por peso}, \emph{Aptos} y \emph{Tasa de finalización}. Los gráficos de \emph{Sector creativo}, \emph{Género} y \emph{Estado frente a Fondo Emprender}. & Los gráficos por año (\emph{Inscritos por año}, \emph{Ingresos por año}, \emph{Ganadores por año}, \emph{Ingreso por inscrito}), que siempre muestran la serie completa.\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\nota{\textbf{Ejemplo.} Si se elige 2025, la tarjeta de inscritos muestra solo los emprendedores que ingresaron en 2025, y el gráfico de sectores muestra solo los sectores de esos emprendedores. La serie por años sigue mostrando 2016 a 2026 para poder comparar.}
+
+\subsection{Las tarjetas superiores}
+
+La franja superior tiene ocho tarjetas. Cada una tiene un número grande y una explicación pequeña debajo. Se leen de izquierda a derecha.
+
+\begin{longtable}{@{}>{\bfseries}p{3.8cm}p{3.2cm}p{8.2cm}@{}}
+\toprule
+Tarjeta & Valor (filtro Todos) & Cómo se calcula\\
+\midrule
+\endhead
+Emprendedores inscritos & 79 & Cuenta de \texttt{Estudiantes}. Con filtro, solo los del año de ingreso elegido.\\
+Tasa de finalización & 35,7\,\% & Finalizados ÷ matrículas con estado conocido (las que no dicen \emph{Sin dato}). Con filtro, solo los cursos de ese año.\\
+Ganadores Fondo Emprender & 12 & Estudiantes con \texttt{GanadorFondoEmprender = Sí}. Con filtro, por año de ingreso.\\
+Tasa de éxito Fondo Emprender & 15,2\,\% & Ganadores ÷ inscritos.\\
+Recursos apalancados & 1.200 millones & Suma de \texttt{FondosObtenidos} de \texttt{Estudiantes}. Son los recursos que obtuvieron los emprendimientos.\\
+Ingresos por formación & 126,6 millones & Suma de \texttt{Monto} de \texttt{Finanzas}. Es lo que factura PRANA por formación.\\
+Pesos apalancados por peso facturado & 9,48 & Recursos apalancados ÷ ingresos por formación. Indica cuántos pesos de recursos externos llegan por cada peso facturado.\\
+Aptos para Fondo Emprender & 79 & Emprendedores con \texttt{AptoFondoEmprender = Sí}. Ver la regla de elegibilidad más abajo.\\
+\bottomrule
+\end{longtable}
+
+\nota{\textbf{Cuidado con la tarjeta de aptos.} Con los datos actuales, los 79 emprendedores son aptos. Esto ocurre porque todos son mayores de edad y tienen nivel profesional o superior. Es una cifra válida, pero conviene confirmarla con el mentor antes de usarla como indicador de calidad de la convocatoria, porque un valor del 100\,\% casi nunca refleja la realidad completa.}
+
+\subsection{Regla de elegibilidad para el Fondo Emprender}
+
+El libro aplica estas reglas. Un emprendedor es \textbf{apto} solo si cumple las dos condiciones:
+
+\begin{enumerate}[leftmargin=1.6em]
+  \item \textbf{Edad:} 18 años o más. Los rangos del tablero son 18--25, 26--40 y 41--60. Los menores de edad quedan como \emph{No: menor de edad}.
+  \item \textbf{Nivel de formación:} Profesional, Especialización, Maestría o Doctorado. Bachiller, Técnico y Tecnólogo quedan como \emph{No: nivel de formación}.
+\end{enumerate}
+
+Si falta la edad o el nivel, el estudiante aparece como \emph{Falta dato}. Esa categoría es la que hay que vigilar porque deja al emprendedor fuera del conteo de aptos sin que nadie lo haya decidido.
+
+% =====================================================================
+\section{Guía de los gráficos del Dashboard}
+% =====================================================================
+
+Esta sección explica los 11 gráficos de la hoja \texttt{Dashboard}, en el mismo orden en que aparecen. Cada uno tiene la misma estructura: qué mide, cómo se calcula y cómo leerlo.
+
+\subsection{Gráficos por año}
+
+\ficha{1. Inscritos por año de ingreso}
+{Fila 11, columna B. Barras por año, 2016 a 2026.}
+{Cuántos emprendedores entran al programa cada año. Es el indicador de volumen.}
+{Conteo de matrículas por año de curso (\texttt{Resumen\_Anual}, columna B). Un emprendedor con dos matrículas el mismo año cuenta dos veces en esta hoja.}
+{Si las barras bajan varios años seguidos, la convocatoria se está debilitando. Compárelo con la meta de 8 inscritos por año en \texttt{KPIs\_y\_Metas}.}
+
+\ficha{2. Ingresos por año (millones de pesos)}
+{Fila 11, columna J. Barras por año.}
+{Cuánto factura PRANA por el Curso Plan de Negocios cada año. Es el indicador financiero.}
+{Suma del campo \texttt{Monto} de \texttt{Finanzas} por año.}
+{Muestra si el programa se sostiene económicamente. Solo 2020, 2022 y 2023 alcanzan la meta de 15 millones; 2025 (6 millones) y 2026 (parcial, 7,6 millones) quedan muy por debajo.}
+
+\ficha{3. Ganadores de Fondo Emprender por año}
+{Fila 28, columna B. Barras por año de inicio de ejecución.}
+{Cuántos emprendimientos ganan recursos cada año. Es la meta final del acompañamiento.}
+{Conteo de la hoja \texttt{FondoEmprender} por \texttt{AnioInicio}. No se cuenta por año de ingreso a PRANA; por eso puede haber ganadores en años en que el emprendedor ya no aparece como inscrito.}
+{El pico de 2019 (3 ganadores) es el mejor año de la serie. Desde 2025 no hay ganadores registrados.}
+
+\ficha{4. Ingreso por inscrito (millones de pesos)}
+{Fila 70, columna J. Línea por año.}
+{Cuánto ingreso deja en promedio cada emprendedor. Sirve para revisar precios y becas.}
+{Ingresos del año ÷ inscritos del año.}
+{Una caída de esta línea puede venir de menos ingresos, de más inscritos o de becas. Revise las otras gráficas para saber cuál.}
+
+\subsection{Gráficos del año elegido}
+
+\ficha{5. Sector creativo}
+{Fila 28, columna J. Barras horizontales por sector.}
+{En qué sectores están los emprendedores. Sirve para enfocar contenidos, mentores y alianzas.}
+{Conteo por \texttt{SectorCreativo} de \texttt{Estudiantes}, respondiendo al filtro de año.}
+{Los sectores con más barras son los que más atención pueden requerir. Con los datos actuales, Diseño (12), Audiovisual y Cine (10) y Moda y Joyería (7) son los tres sectores con más emprendedores: suman 29 de 79.}
+
+\ficha{6. Género}
+{Fila 53, columna B. Gráfico de pastel.}
+{Participación de mujeres y hombres. Sirve para seguir las metas de inclusión.}
+{Porcentaje de inscritos por \texttt{Genero}, respondiendo al filtro de año.}
+{Con los datos actuales hay 30 mujeres y 49 hombres. Compare con la meta de inclusión que defina la dirección.}
+
+\ficha{7. Estado frente a Fondo Emprender}
+{Fila 53, columna J. Barras por estado.}
+{En qué punto del proceso del Fondo Emprender está cada emprendedor.}
+{Conteo por \texttt{EstadoFondoEmprender}. Las categorías son: No ha participado, En proceso, Aprobado, Ganador, Proceso finalizado y Retirado.}
+{Sirve para saber a quién acompañar. Los que están \emph{En proceso} son la oportunidad más clara de seguimiento.}
+
+\ficha{8. Estado de matrícula (cohortes 2016 a 2018)}
+{Fila 70, columna B. Barras por estado.}
+{Cuántos terminan, siguen o se retiran del curso. Es la señal principal que se analiza en el diagnóstico.}
+{Conteo por \texttt{EstadoMatricula} de las matrículas de 2016, 2017 y 2018. Son las únicas cohortes con estado registrado.}
+{Si el gráfico muestra muchas barras de \emph{Retirado} o \emph{En proceso (último registro)}, el seguimiento de esas cohortes está incompleto o el abandono es alto. Revise la calidad de datos antes de sacar conclusiones.}
+
+\ficha{9. Rango de edad}
+{Fila 87, columna B. Barras por rango.}
+{Edad de los emprendedores en tres rangos. Los menores de edad no pueden entrar a Fondo Emprender.}
+{Conteo por \texttt{RangoEdad}, respondiendo al filtro de año.}
+{La categoría \emph{Menor de edad} debería quedar en cero. Si aparece un valor, revise la regla CD03 en \texttt{Calidad\_Datos}.}
+
+\ficha{10. Nivel de formación}
+{Fila 87, columna J. Barras por nivel.}
+{Nivel educativo de los emprendedores. Es un requisito para Fondo Emprender.}
+{Conteo por \texttt{NivelEducativo}, respondiendo al filtro de año.}
+{Bachiller, Técnico y Tecnólogo no son aptos. Un nivel con muchos casos en \emph{Sin dato} indica que falta completar la columna.}
+
+\ficha{11. Aptos para Fondo Emprender}
+{Fila 104, columna B. Barras por resultado.}
+{Cuántos cumplen los requisitos. Sirve para saber a quién postular y a quién orientar a otras convocatorias.}
+{Columna \texttt{AptoFondoEmprender} de \texttt{Estudiantes}: Sí, No: menor de edad, No: nivel de formación, o Falta dato.}
+{Una barra en \emph{Falta dato} es trabajo pendiente. Las barras \emph{No} son emprendedores que no pueden postularse a Fondo Emprender y pueden orientarse a otras convocatorias.}
+
+\nota{\textbf{Gráficos de la hoja Dashboard\_G2\_G6 y de KPIs.} Estos gráficos se explican en las secciones siguientes, donde se describen las hojas a las que pertenecen.}
+
+% =====================================================================
+\section{Diagnóstico y priorización (\texttt{Dashboard\_G2\_G6})}
+% =====================================================================
+
+Esta hoja responde dos preguntas: \emph{¿en qué años o cohortes se concentra el problema?} y \emph{¿a qué emprendedor conviene llamar primero?}
+
+\subsection{Parte 1: diagnóstico por año (Guía 2)}
+
+La tabla de la hoja tiene, por año: inscritos, finalizados, retirados, \% de finalización, \% de retiro, desviación frente al promedio y un \textbf{nivel diagnóstico}.
+
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{\% de finalización} = finalizados ÷ inscritos.
+  \item \textbf{\% de retiro} = retirados ÷ inscritos.
+  \item \textbf{Desviación de finalización} = la finalización de ese año menos el promedio de todos los años. Un valor positivo significa que ese año termina más que el promedio.
+  \item \textbf{Nivel diagnóstico}: \emph{Crítico} si el retiro es de 30\,\% o más; \emph{Atención} si está entre 15\,\% y 30\,\%; \emph{Estable} si es menor de 15\,\%.
+\end{itemize}
+
+El gráfico \emph{Evolución de finalización y retiro} muestra las dos líneas por año. Cuando una se separa del resto, es la señal para buscar la causa.
+
+\nota{\textbf{Ejemplo con los datos actuales.} En 2017 hubo 12 inscritos, un solo finalizado y cuatro retirados. El retiro fue de 33\,\%, por eso aparece como \emph{Crítico}. Es la señal para revisar qué pasó con esa cohorte.}
+
+Para buscar la causa, la hoja propone una matriz de lectura. Cada señal tiene una variable que revisar y una pregunta:
+
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{3.4cm}p{3.5cm}X@{}}
+\toprule
+Señal detectada & Variable a revisar & Pregunta diagnóstica\\
+\midrule
+Alta tasa de retiro & Estado y módulo alcanzado & ¿En qué etapa se concentra el abandono?\\
+Baja finalización & Asistencia y calificación & ¿Los bajos resultados coinciden con menor asistencia o desempeño?\\
+Bajo éxito en Fondo Emprender & Estado del Fondo y sector & ¿Qué perfiles o sectores llegan menos a resultado exitoso?\\
+Desviación por cohorte & Año y curso & ¿La variación se concentra en una cohorte específica?\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Parte 2: priorización de casos (Guía 6)}
+
+Cada emprendedor recibe un \textbf{puntaje} que suma cuatro reglas. Entre más alto el puntaje, más seguimiento requiere.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{1.0cm}p{4.3cm}p{1.6cm}X@{}}
+\toprule
+Regla & Condición & Puntos & Interpretación\\
+\midrule
+R1 & Matrícula retirada & 3 & Requiere revisión prioritaria\\
+R2 & No finalizado y módulo máximo $\leq$ 3 & 2 & Bajo avance del proceso\\
+R3 & Fondo Emprender en proceso & 2 & Oportunidad de acompañamiento\\
+R4 & No es ganador del Fondo Emprender & 1 & Seguimiento de resultado\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Con el puntaje se asigna una prioridad:
+
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{3.4cm}p{3.0cm}X@{}}
+\toprule
+Prioridad & Puntaje & Qué hacer\\
+\midrule
+Alta & 5 o más & Llamar esta semana. Revisar la situación con el mentor.\\
+Media & 3 a 4 & Hacer seguimiento en el mes.\\
+Baja & 0 a 2 & Mantener en el registro y revisar en el siguiente corte.\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+La hoja muestra el conteo por prioridad, la lista completa de casos con sus datos y un gráfico de barras de casos por prioridad.
+
+\nota{\textbf{Advertencia importante.} Con los datos actuales, 50 de 79 casos quedan en \emph{Alta}. Muchos de esos casos llegan a 5 puntos por una razón técnica: el módulo máximo alcanzado está vacío (\emph{Sin dato}, que se toma como 0). Como 0 es menor o igual a 3, la regla R2 suma 2 puntos sin que el emprendedor haya bajado su avance. La propia hoja de calidad lo advierte en la regla CD16. Antes de usar la lista para decidir a quién llamar, complete el módulo alcanzado de cada matrícula.}
+
+% =====================================================================
+\section{Metas y semáforos (\texttt{KPIs\_y\_Metas})}
+% =====================================================================
+
+Esta hoja responde: \emph{¿vamos bien frente a lo que nos propusimos?} Tiene un selector de año en la celda \textbf{C5} (por defecto 2025, el último año completo).
+
+\subsection{Tablero de indicadores}
+
+Cada indicador tiene un objetivo (OKR), un nivel, una línea base, un valor del año, una meta, un límite de alerta y un semáforo.
+
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Línea base:} promedio de los tres años anteriores al año evaluado.
+  \item \textbf{Valor del año:} lo que pasó en el año seleccionado.
+  \item \textbf{Semáforo:} \emph{Verde} si el valor llega a la meta; \emph{Amarillo} si está entre el límite de alerta y la meta; \emph{Rojo} si está por debajo del límite de alerta. Para indicadores donde \emph{menor es mejor}, la lógica se invierte.
+  \item \textbf{Variación:} diferencia del valor del año frente a la línea base.
+\end{itemize}
+
+Estado de los indicadores con datos disponibles para 2025:
+
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{4.8cm}rrrX@{}}
+\toprule
+Indicador & Valor 2025 & Meta & Alerta & Semáforo\\
+\midrule
+Emprendedores inscritos & 4 & 8 & 6 & Rojo\\
+Ganadores de Fondo Emprender & 0 & 2 & 1 & Rojo\\
+Tasa de éxito Fondo Emprender & 0\,\% & 20\,\% & 10\,\% & Rojo\\
+\% de inscritos aptos para Fondo Emprender & 100\,\% & 70\,\% & 50\,\% & Verde\\
+Ingresos por formación & 6 millones & 15 millones & 12 millones & Rojo\\
+Ingreso por inscrito & 1,5 millones & 2 millones & 1,5 millones & Amarillo\\
+Cumplimiento de reglas de calidad & 86,3\,\% & 95\,\% & 80\,\% & Amarillo\\
+Tasa de finalización y de retiro & Sin dato & 60\,\% / 15\,\% & 40\,\% / 30\,\% & Sin dato\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Las tasas de finalización y de retiro aparecen en \emph{Sin dato} para 2025 porque las matrículas de 2019 a 2026 no tienen estado registrado. Es una deuda de datos, no un buen resultado.
+
+\subsection{Gráficos de metas}
+
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Emprendedores inscritos vs. meta:} barras por año contra una línea roja fija en 8. Si las barras quedan por debajo varios años seguidos, hay que revisar la convocatoria.
+  \item \textbf{Ingresos por formación vs. meta:} barras por año contra una línea de 15 millones. Muestra si el programa se sostiene financieramente.
+\end{itemize}
+
+\subsection{Rutina de gestión}
+
+La hoja propone una rutina para pasar de los números a las acciones:
+
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{2.4cm}p{4.0cm}p{3.8cm}X@{}}
+\toprule
+Cada cuánto & Qué se revisa & Quién & Qué se decide\\
+\midrule
+Mensual & Calidad de datos y casos en prioridad alta & Practicante de datos y coordinación & Qué datos completar y a qué emprendedores llamar\\
+Trimestral & Semáforos y tendencias del Dashboard & Dirección de PRANA y mentor & Acciones para los indicadores en amarillo o rojo, con responsable y fecha\\
+Anual & Línea base, metas y set de indicadores & Dirección de PRANA & Ajustar metas para el año siguiente y quitar indicadores que no se usan\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\nota{\textbf{Para una reunión.} Si solo se tiene 15 minutos, revise esta tabla de semáforos: indica en qué indicadores hay que actuar primero. Las filas en rojo con meta clara (inscritos, ganadores, ingresos) son las prioritarias.}
+
+% =====================================================================
+\section{Calidad de datos (\texttt{Calidad\_Datos})}
+% =====================================================================
+
+Un tablero solo es tan bueno como sus datos. La hoja \texttt{Calidad\_Datos} tiene 21 reglas que revisan cada registro de forma automática. Cada regla tiene una dimensión de calidad, una severidad, un número de registros evaluados, un número de incumplimientos, un porcentaje de cumplimiento y un semáforo.
+
+\subsection{Dimensiones de calidad}
+
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Completitud:} el dato está registrado.
+  \item \textbf{Validez:} el dato está dentro de la lista o del rango permitido.
+  \item \textbf{Unicidad:} el identificador no se repite.
+  \item \textbf{Integridad referencial:} un registro apunta a alguien que sí existe (por ejemplo, una matrícula a un estudiante).
+  \item \textbf{Consistencia:} dos campos que deben coincidir coinciden.
+\end{itemize}
+
+\subsection{Severidad}
+
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Bloquea:} la hoja no deja escribir un valor fuera de la lista o del rango. Es un control en origen.
+  \item \textbf{Alerta:} el dato se puede guardar, pero queda marcado para revisión.
+\end{itemize}
+
+\subsection{Resultado actual}
+
+El tablero tiene 21 reglas activas, 197 incumplimientos en total y un cumplimiento global de \textbf{86,3\,\%}. Hay 4 reglas en rojo y 17 en verde.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}p{1.4cm}p{6.2cm}r X@{}}
+\toprule
+ID & Regla & \% cumpl. & Semáforo\\
+\midrule
+CD15 & Estado de matrícula conocido & 35,4\,\% & Rojo\\
+CD16 & Módulo alcanzado registrado (1 a 5) & 35,4\,\% & Rojo\\
+CD17 & Canal de captación registrado & 0\,\% & Rojo\\
+CD20 & Número de convocatoria registrado & 0\,\% & Rojo\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Las cuatro reglas en rojo son las que más afectan a los indicadores. Con CD15 en rojo, la tasa de finalización solo se calcula sobre 28 de 79 matrículas, y CD16 distorsiona la priorización. CD17 y CD20 son datos que hoy no se capturan en absoluto.
+
+\nota{\textbf{Orden sugerido de corrección.} (1) Completar el estado y el módulo de cada matrícula (CD15 y CD16). (2) Registrar el canal de captación (CD17). (3) Buscar el número de convocatoria de cada ganador en el acta del Fondo Emprender (CD20). Después de esto, recalcule la priorización y la línea de finalización.}
+
+\subsection{Bitácora de calidad}
+
+La parte inferior de la hoja tiene una bitácora mensual. Cada mes se copia el cumplimiento global y se pega \textbf{como valor} (no como fórmula), junto con las acciones tomadas. Así queda el historial de la calidad aunque cambien los datos.
+
+% =====================================================================
+\section{Cómo leer los resultados con cuidado}
+% =====================================================================
+
+Esta sección señala los puntos donde las cifras pueden inducir a error. Están ordenados por importancia.
+
+\begin{enumerate}[leftmargin=1.6em]
+  \item \textbf{Dos formas de contar inscritos.} La tarjeta y el gráfico de \emph{Emprendedores inscritos} cuentan personas por año de ingreso (\texttt{Estudiantes}). En cambio, \emph{Inscritos por año} y \texttt{Resumen\_Anual} cuentan matrículas por año de curso. Además, \texttt{KPIs\_y\_Metas} cuenta personas por año de ingreso en su histórico. Por eso los números no coinciden: en 2017 dan 12 en un caso y 10 en otro, y en 2018 dan 13 y 15. \textbf{Recomendación:} definir una sola regla y aplicarla en todas las hojas.
+  \item \textbf{Prioridad alta inflada.} Ver la advertencia de la sección de diagnóstico. Hasta que el módulo esté completo, la lista de prioridad alta no debe usarse como lista de llamadas.
+  \item \textbf{Datos vacíos que parecen ceros.} La tasa de finalización solo usa matrículas con estado conocido. Si se llenan más estados, la tasa puede cambiar mucho de un día para otro. Lo mismo pasa con \emph{Ganadores} en años sin convocatoria registrada.
+  \item \textbf{Año 2026 parcial.} Las cifras de 2026 corresponden solo al primer tramo del año y no se pueden comparar con años completos. El libro lo advierte en el encabezado.
+  \item \textbf{Ganadores por año de inicio, no por año de ingreso.} Un emprendedor que entró en 2019 puede ganar en 2021. El gráfico de ganadores usa el año en que empieza la ejecución del recurso.
+  \item \textbf{Ingreso por inscrito y cifras con pocos casos.} Con 4 o 6 inscritos por año, un solo caso mueve mucho el promedio. Interprete las variaciones con cautela.
+  \item \textbf{Datos personales fuera del libro.} Nombres, documentos y contactos no están en este archivo. Se gestionan en un directorio confidencial aparte. No copie datos personales al libro.
+\end{enumerate}
+
+% =====================================================================
+\section{Cómo mantener el libro}
+% =====================================================================
+
+\subsection{Agregar un emprendedor}
+
+\begin{enumerate}[leftmargin=1.6em]
+  \item Escriba una nueva fila en \texttt{Estudiantes}. Use un \texttt{IDEstudiante} nuevo y consecutivo (EST080, EST081, \dots).
+  \item Complete las columnas \texttt{Edad}, \texttt{NivelEducativo}, \texttt{Genero}, \texttt{SectorCreativo} y \texttt{AnioIngreso}. Use las listas desplegables.
+  \item Si el emprendedor ya tiene matrícula o aparece en Fondo Emprender, agregue también esas filas, usando el mismo \texttt{IDEstudiante}.
+  \item Revise la hoja \texttt{Calidad\_Datos}: la fila nueva debe quedar en verde en las reglas de completitud.
+\end{enumerate}
+
+\subsection{Registrar una matrícula}
+
+\begin{enumerate}[leftmargin=1.6em]
+  \item Escriba una fila en \texttt{Matriculas} con un \texttt{IDMatricula} nuevo.
+  \item El \texttt{IDCurso} debe tener la forma \texttt{CUR} seguido del año (por ejemplo \texttt{CUR2026}). Si no tiene esa forma, el registro no entra en los conteos por año.
+  \item Complete \texttt{EstadoMatricula} (Finalizado, En proceso, Retirado o Sin dato) y \texttt{ModuloMaximoAlcanzado} (1 a 5).
+\end{enumerate}
+
+\subsection{Registrar un ingreso o un ganador}
+
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Ingreso:} una fila en \texttt{Finanzas} con año, tipo, concepto, curso y monto mayor que cero.
+  \item \textbf{Ganador:} una fila en \texttt{FondoEmprender} con el \texttt{IDEstudiante}, la convocatoria, el año de inicio y el monto. Luego marque \texttt{GanadorFondoEmprender = Sí} en \texttt{Estudiantes}. Ambas hojas deben coincidir (regla CD11).
+\end{itemize}
+
+\subsection{Qué no hacer}
+
+\begin{itemize}[leftmargin=1.4em]
+  \item No escriba en las hojas de salida (\texttt{Dashboard}, \texttt{Dashboard\_G2\_G6}, \texttt{KPIs\_y\_Metas}, \texttt{Calidad\_Datos}, \texttt{Resumen\_Anual}, \texttt{Calculos\_Dashboard}). Las fórmulas se pierden.
+  \item No cambie el orden ni los nombres de las columnas de las hojas de entrada. Las fórmulas los buscan por nombre de columna y por posición.
+  \item No pegue valores sobre celdas con fórmula en el tablero. Si necesita una copia, use la bitácora de calidad.
+  \item No agregue filas por debajo de la fila 1000 de una hoja de entrada. Las fórmulas no las leen.
+\end{itemize}
+
+% =====================================================================
+\section{Glosario}
+% =====================================================================
+
+\begin{description}[leftmargin=3.2cm,style=nextline]
+  \item[Aptos] Emprendedores que cumplen la edad y el nivel de formación para postularse al Fondo Emprender.
+  \item[Cohorte] Grupo de emprendedores o matrículas de un mismo año.
+  \item[Desviación] Diferencia entre el valor de un año y el promedio de todos los años.
+  \item[Línea base] Promedio de los tres años anteriores al año evaluado.
+  \item[OKR] Objetivo y resultado clave. Un objetivo cualitativo medido con indicadores.
+  \item[Puntaje de priorización] Suma de las reglas R1 a R4 para cada emprendedor.
+  \item[Recursos apalancados] Recursos que obtienen los emprendimientos del Fondo Emprender.
+  \item[Semáforo] Color que indica el estado de un indicador frente a su meta: verde, amarillo o rojo.
+  \item[Sin dato] Valor no registrado. No equivale a cero.
+\end{description}
+
+\end{document}

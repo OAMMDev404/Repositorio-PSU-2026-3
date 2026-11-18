@@ -53,6 +53,20 @@ Las etapas del trabajo siguen el backlog del proyecto (Fase 3, Etapa 3: arquitec
 - Si faltan la edad o el nivel educativo, el estudiante aparece como “Falta dato”.
 - Rangos de edad: 18–25, 26–40 y 41–60.
 
+## Documentación del tablero (`documentacion_dashboard/`)
+
+Esta subcarpeta contiene el libro de indicadores y una guía completa para entenderlo.
+
+| Archivo | Qué es |
+|---|---|
+| `PRANA_Base_Dashboards_v5.xlsx` | Copia del libro de indicadores (ver la sección anterior para el detalle de sus hojas). |
+| `explicacion_dashboard.tex` | Documento fuente en LaTeX (blanco y negro) que explica el tablero a detalle: para qué sirve, cómo está armado, cómo usar el filtro de año, qué mide cada tarjeta y cada gráfico, la lógica de diagnóstico y priorización, las metas y semáforos, la calidad de datos, cómo mantener el libro y un glosario. |
+| `explicacion_dashboard.pdf` | PDF ya compilado de `explicacion_dashboard.tex`, para leer sin instalar LaTeX. |
+
+Para recompilar el documento, abra `explicacion_dashboard.tex` con cualquier editor de LaTeX (por ejemplo, Overleaf) o ejecute `tectonic explicacion_dashboard.tex` en la carpeta.
+
+Durante la revisión del libro, el documento señala dos puntos a corregir: las cifras de inscritos por año no coinciden entre `Resumen_Anual` y `KPIs_y_Metas` (cuentan con criterios distintos), y la lista de prioridad alta está inflada porque el módulo máximo alcanzado está vacío en muchas matrículas.
+
 ## Documentos de otros proyectos (`otros_documentos/`)
 
 Estos archivos no son de PRANA. Son documentos de otros proyectos de los autores, guardados aquí por solicitud del equipo.
